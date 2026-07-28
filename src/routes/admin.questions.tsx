@@ -164,9 +164,14 @@ function AdminQuestions() {
               <div className="text-xs font-semibold tracking-widest text-primary">ARENA</div>
             </div>
           </Link>
-          <Link to="/admin/login" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-            Sign Out
-          </Link>
+          <div className="flex items-center gap-6">
+            <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              Back to Home
+            </Link>
+            <Link to="/admin/login" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              Sign Out
+            </Link>
+          </div>
         </nav>
       </header>
 

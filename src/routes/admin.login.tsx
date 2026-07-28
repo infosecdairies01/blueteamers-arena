@@ -37,10 +37,15 @@ function AdminLogin() {
               <div className="text-xs font-semibold tracking-widest text-primary">ARENA</div>
             </div>
           </Link>
-          <span className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground">
-            <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-            Admin Portal
-          </span>
+          <div className="flex items-center gap-4">
+            <Link to="/" className="text-xs font-medium text-muted-foreground hover:text-foreground">
+              Back to Home
+            </Link>
+            <span className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground">
+              <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+              Admin Portal
+            </span>
+          </div>
         </nav>
       </header>
 

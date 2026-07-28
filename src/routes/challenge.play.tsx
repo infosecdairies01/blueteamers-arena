@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
@@ -8,6 +8,7 @@ import {
   Download,
   FileText,
   Flag,
+  Home,
   Lightbulb,
   Maximize2,
   RotateCcw,
@@ -179,6 +180,12 @@ function PlayPage() {
             >
               <ArrowLeft className="h-3.5 w-3.5" /> Exit
             </button>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-[var(--surface)] px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground"
+            >
+              <Home className="h-3.5 w-3.5" /> Home
+            </Link>
             <div className={`grid h-8 w-8 flex-none place-items-center rounded-md ${accent.bgSoft} ${accent.text} text-sm font-semibold`}>
               {challenge.number}
             </div>

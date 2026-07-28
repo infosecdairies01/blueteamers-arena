@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Home } from "lucide-react";
 
 export const Route = createFileRoute("/review")({
   component: Review,
@@ -19,12 +19,21 @@ function Review() {
   return (
     <main className="min-h-screen bg-background px-6 py-12">
       <div className="mx-auto max-w-3xl">
-        <Link
-          to="/competition-complete"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link
+            to="/competition-complete"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back
+          </Link>
+          <span className="text-muted-foreground/40">•</span>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <Home className="h-4 w-4" /> Back to Home
+          </Link>
+        </div>
         <h1 className="mt-6 text-2xl font-bold tracking-tight">
           Review My Answers
         </h1>

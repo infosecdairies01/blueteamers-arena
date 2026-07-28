@@ -29,9 +29,9 @@ function Shell({ children }: { children: React.ReactNode }) {
               <div className="text-xs font-semibold tracking-widest text-primary">ARENA</div>
             </div>
           </Link>
-          <a href="#about" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-            About
-          </a>
+          <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+            Back to Home
+          </Link>
         </nav>
       </header>
       <div className="mx-auto flex max-w-7xl items-center justify-center px-6 py-16">

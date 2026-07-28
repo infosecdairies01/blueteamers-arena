@@ -46,7 +46,10 @@ function Event() {
               <div className={`text-xs font-semibold tracking-widest ${accent.text}`}>ARENA</div>
             </div>
           </Link>
-          <a href="#about" className="text-sm font-medium text-muted-foreground hover:text-foreground">About</a>
+          <div className="flex items-center gap-6">
+            <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">Back to Home</Link>
+            <Link to="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground">About Us</Link>
+          </div>
         </nav>
       </header>
       <div className="mx-auto flex max-w-3xl flex-col px-6 py-16">

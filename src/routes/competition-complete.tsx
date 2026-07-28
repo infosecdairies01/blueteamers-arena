@@ -6,6 +6,7 @@ import {
   Clock,
   Medal,
   ArrowLeft,
+  Home,
 } from "lucide-react";
 
 export const Route = createFileRoute("/competition-complete")({
@@ -94,12 +95,19 @@ function CompetitionComplete() {
           </Link>
         </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-6">
           <Link
             to="/dashboard"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" /> Return to Dashboard
+          </Link>
+          <span className="text-muted-foreground/40">•</span>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <Home className="h-4 w-4" /> Back to Home
           </Link>
         </div>
       </div>

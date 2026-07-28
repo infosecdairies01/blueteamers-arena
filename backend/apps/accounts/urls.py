@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from apps.accounts.viewsets.auth_viewsets import (
     LoginView,
     TokenRefreshView,
@@ -8,6 +9,10 @@ from apps.accounts.viewsets.auth_viewsets import (
     ResetPasswordView,
 )
 from apps.accounts.viewsets.user_viewsets import UserProfileView
+from apps.accounts.viewsets.admin_platform_viewset import AdminPlatformViewSet
+
+router = DefaultRouter()
+router.register(r"admin", AdminPlatformViewSet, basename="admin-platform")
 
 urlpatterns = [
     path("auth/login/", LoginView.as_view(), name="auth-login"),
@@ -17,4 +22,5 @@ urlpatterns = [
     path("auth/forgot-password/", ForgotPasswordView.as_view(), name="auth-forgot-password"),
     path("auth/reset-password/", ResetPasswordView.as_view(), name="auth-reset-password"),
     path("auth/me/", UserProfileView.as_view(), name="auth-me"),
+    path("", include(router.urls)),
 ]

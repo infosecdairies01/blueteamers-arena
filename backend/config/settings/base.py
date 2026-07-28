@@ -49,11 +49,19 @@ INSTALLED_APPS = [
     "apps.participants.apps.ParticipantsConfig",
     "apps.questions.apps.QuestionsConfig",
     "apps.challenges.apps.ChallengesConfig",
+    "apps.submissions.apps.SubmissionsConfig",
+    "apps.leaderboard.apps.LeaderboardConfig",
+    "apps.competition.apps.CompetitionConfig",
+    "apps.audit.apps.AuditConfig",
     "apps.api.apps.ApiConfig",
+    "django_prometheus",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.middleware.gzip.GZipMiddleware",
+    "apps.common.middleware.SuspiciousIPMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -64,6 +72,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "config.urls"
+
+# Security Headers & Hardening
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
 
 TEMPLATES = [
     {
@@ -121,7 +134,30 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "EXCEPTION_HANDLER": "apps.common.exceptions.custom_exception_handler",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "100/hour",
+        "user": "1000/hour",
+        "login": "5/minute",
+        "verify_code": "10/minute",
+    },
 }
+
+# Whitenoise Static Storage
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Celery Settings
+CELERY_BROKER_URL = env.str("REDIS_URL", default="redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = env.str("REDIS_URL", default="redis://localhost:6379/0")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
 
 # SimpleJWT Settings
 SIMPLE_JWT = {

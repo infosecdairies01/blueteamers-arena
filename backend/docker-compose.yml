@@ -1,48 +1,81 @@
+version: '3.8'
+
 services:
-  db:
+  blueteamers_db:
     image: postgres:16-alpine
     container_name: blueteamers_db
-    restart: always
     environment:
       POSTGRES_DB: blueteamers_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: blueteamers_user
+      POSTGRES_PASSWORD: blueteamers_password
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d blueteamers_db"]
+      test: ["CMD-SHELL", "pg_isready -U blueteamers_user -d blueteamers_db"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  blueteamers_redis:
+    image: redis:7-alpine
+    container_name: blueteamers_redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  blueteamers_api:
+    build: .
     container_name: blueteamers_api
-    restart: always
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/app
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 4 --threads 2
     ports:
       - "8000:8000"
     environment:
-      - DJANGO_SETTINGS_MODULE=config.settings.development
-      - DEBUG=True
-      - SECRET_KEY=django-insecure-dev-key-change-in-production
-      - DATABASE_ENGINE=django.db.backends.postgresql
-      - DATABASE_NAME=blueteamers_db
-      - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=postgres
-      - DATABASE_HOST=db
-      - DATABASE_PORT=5432
-      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,web
-      - CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      SECRET_KEY: ${SECRET_KEY:-django-insecure-production-secret-key-change-me}
+      DEBUG: "False"
+      DATABASE_URL: postgres://blueteamers_user:blueteamers_password@blueteamers_db:5432/blueteamers_db
+      REDIS_URL: redis://blueteamers_redis:6379/0
+      ALLOWED_HOSTS: "*"
     depends_on:
-      db:
+      blueteamers_db:
         condition: service_healthy
+      blueteamers_redis:
+        condition: service_healthy
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+
+  blueteamers_celery_worker:
+    build: .
+    container_name: blueteamers_celery_worker
+    command: celery -A config worker --loglevel=info
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DATABASE_URL: postgres://blueteamers_user:blueteamers_password@blueteamers_db:5432/blueteamers_db
+      REDIS_URL: redis://blueteamers_redis:6379/0
+    depends_on:
+      - blueteamers_api
+      - blueteamers_redis
+
+  blueteamers_celery_beat:
+    build: .
+    container_name: blueteamers_celery_beat
+    command: celery -A config beat --loglevel=info
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DATABASE_URL: postgres://blueteamers_user:blueteamers_password@blueteamers_db:5432/blueteamers_db
+      REDIS_URL: redis://blueteamers_redis:6379/0
+    depends_on:
+      - blueteamers_api
+      - blueteamers_redis
 
 volumes:
   postgres_data:
+  static_volume:
+  media_volume:
